@@ -1,28 +1,22 @@
 
-import React, { useContext } from 'react';
-import { InputBase } from '@material-ui/core';
+import React, { useState } from 'react';
+import { FormControlLabel, FormGroup, InputBase, Checkbox } from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
-import SearchInputContext from '../../../context/search-input-context';
-import HistoryToggleContext from '../../../context/history-toggle-context';
+import History from '@material-ui/icons/History';
+import HistoryOutlined from '@material-ui/icons/HistoryOutlined';
 // import custom state hooks
 import useStyles from './search-form.styles';
 
 export default function SearchForm() { 
   const classes = useStyles();
-  // const [searchValue, setSearchValue] = useState(null);
-  const {  addSearchInput } = useContext(SearchInputContext);
-  const historyToggle = useContext(HistoryToggleContext);
-
+  const [searchValue, setSearchValue] = useState(null);
+  
   const handleSearchOnChange = (event)=>{
     if(event.key === "Enter"){
       console.log("Search");
       console.log(event.target.value);
-      // setSearchValue(event.target.value)
-      console.log(historyToggle);
-      if(historyToggle){
-        addSearchInput(event.target.value);
-      }
+      setSearchValue(event.target.value)
       // context 
       // trigger effect
     }
