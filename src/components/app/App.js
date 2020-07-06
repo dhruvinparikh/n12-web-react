@@ -1,152 +1,165 @@
-import React from 'react';
+import React, { Fragment, useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
+import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
+import Container from '@material-ui/core/Container';
+
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import {History, HistoryOutlined} from '@material-ui/icons';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import SearchForm from '../../domain/search/search-form'
-import useStyles from './App.styles';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 
-import PrimaryMenuAppBar from '../menu'
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+
+import SearchForm from '../../domain/search/search-form';
+import PrimaryMenuAppBar from '../menu';
+import ResultsGridList from '../result-tiles';
+
+//  uncomment for Context
+// import HistoryToggleProvider, {HistoryToggleContext} from '../../context/history-toggle-context';
+// import SearchInputProvider, {SearchInputContext} from '../../context/search-input-context';
+
+import useStyles from './App.styles';
+import { useTheme } from '@material-ui/core/styles';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+
+// uncomment for redux
+// import { useSelector } from "react-redux";
+
+import { SEARCH_INPUT_QUERY } from '../../graphql/queries/submitSearchInputQueries';
+import { useQuery } from '@apollo/react-hooks';
 
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
-  // const [anchorEl, setAnchorEl] = React.useState(null);
-  // const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const theme = useTheme();
+  // uncomment for redux
+  // const {searchInputSubmit} = useSelector(state => state.searchForm);
 
-  // const isMenuOpen = Boolean(anchorEl);
-  // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const { data } = useQuery(SEARCH_INPUT_QUERY);
+  console.log("data", data)
+  const [open, setOpen] = React.useState(false);
 
-  // const handleProfileMenuOpen = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
 
-  // const handleMobileMenuClose = () => {
-  //   setMobileMoreAnchorEl(null);
-  // };
-
-  // const handleMenuClose = () => {
-  //   setAnchorEl(null);
-  //   handleMobileMenuClose();
-  // };
-
-  // const handleMobileMenuOpen = (event) => {
-  //   setMobileMoreAnchorEl(event.currentTarget);
-  // };
-
-  const menuId = 'primary-search-account-menu';
-  // const renderMenu = (
-  //   <Menu
-  //     anchorEl={anchorEl}
-  //     anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-  //     id={menuId}
-  //     keepMounted
-  //     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-  //     open={isMenuOpen}
-  //     onClose={handleMenuClose}
-  //   >
-  //     <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-  //     <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-  //   </Menu>
-  // );
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  // const renderMobileMenu = (
-  //   <Menu
-  //     anchorEl={mobileMoreAnchorEl}
-  //     anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-  //     id={mobileMenuId}
-  //     keepMounted
-  //     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-  //     open={isMobileMenuOpen}
-  //     onClose={handleMobileMenuClose}
-  //   >
-  //     <MenuItem>
-  //       <IconButton aria-label="show 4 new mails" color="inherit">
-  //         <Badge badgeContent={4} color="secondary">
-  //           <HistoryOutlined />
-  //         </Badge>
-  //       </IconButton>
-  //       <p>History</p>
-  //     </MenuItem>
-  //     <MenuItem>
-  //       <IconButton aria-label="show 4 new mails" color="inherit">
-  //         <Badge badgeContent={4} color="secondary">
-  //           <MailIcon />
-  //         </Badge>
-  //       </IconButton>
-  //       <p>Messages</p>
-  //     </MenuItem>
-  //     <MenuItem>
-  //       <IconButton aria-label="show 11 new notifications" color="inherit">
-  //         <Badge badgeContent={11} color="secondary">
-  //           <NotificationsIcon />
-  //         </Badge>
-  //       </IconButton>
-  //       <p>Notifications</p>
-  //     </MenuItem>
-  //     <MenuItem onClick={handleProfileMenuOpen}>
-  //       <IconButton
-  //         aria-label="account of current user"
-  //         aria-controls="primary-search-account-menu"
-  //         aria-haspopup="true"
-  //         color="inherit"
-  //       >
-  //         <AccountCircle />
-  //       </IconButton>
-  //       <p>Profile</p>
-  //     </MenuItem>
-  //   </Menu>
-  // );
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
+    <Router>
+    {/* <HistoryToggleProvider> */}
+    {/* <SearchInputProvider> */}
     <div className={classes.grow}>
-    <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-           N10n
-          </Typography>
-          <SearchForm/>
-          <div className={classes.grow} />
-          <PrimaryMenuAppBar />
-          {/* <div className={classes.sectionMobile}>
+      <div className={classes.grow}>
+        <AppBar position="static">
+          <Toolbar>
             <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
+              edge="start"
+              className={classes.menuButton}
               color="inherit"
+              onClick={handleDrawerOpen}
+              aria-label="open drawer"
             >
-              <MoreIcon />
+              <MenuIcon />
             </IconButton>
-          </div> */}
-        </Toolbar>
-      </AppBar>
-      {/* {renderMobileMenu} */}
-      {/* {renderMenu} */}
+              <Typography className={classes.title} variant="h6" noWrap >
+                <Link to="/" style={{ color: 'inherit', textDecoration: 'inherit' }} >
+                  N12
+                </Link>
+              </Typography>
+
+                <SearchForm/>
+            <div className={classes.grow} />
+            <PrimaryMenuAppBar />
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+            <List>
+              <ListItem button component={Link} to={'/reports'}  onClick={handleDrawerClose}>
+                <ListItemIcon><AssessmentIcon /></ListItemIcon>
+                <ListItemText primary={'Reports'} />
+              </ListItem>
+            </List>
+          {/* </Router> */}
+
+          <Divider />
+          {/* <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List> */}
+        </Drawer>
+      </div>
+      {/* <Router> */}
+      <Container maxWidth="md">
+        <Route exact={true} path={["/", "/search"]} render={() => {
+          return(
+            <Fragment>
+              {/* <HistoryToggleContext.Consumer>
+                {(historyContext) => {
+                  console.log("APP", historyContext);
+                  return (
+                  <div>Is history on? {historyContext.historyToggle.toString()} </div>
+                  )
+                }}
+              </HistoryToggleContext.Consumer> */}
+              {/* <div>Is history on? {historyContext.historyToggle.toString()} </div> */}
+              {
+                <div>
+                  {/* 
+                  uncomment for redux
+                  {searchInputSubmit.map((entry, index) =>
+                    <div key={index}>{entry}</div>
+                  )} */}
+
+      {data.searchInputs.map(searchInput => <div>{searchInput.searchText}</div>)}
+
+                  {/* {searchInputSubmit} */}
+  
+
+                </div>
+              }
+
+              {/* <ResultsGridList/> */}
+            </Fragment>
+          )
+        }}/>
+
+        <Route path="/reports" render={()=>{
+          return(<div>REPORT</div>)
+        }}/>
+      </Container>
+
     </div>
-      here - render results
-      here - render history
-    </div>
+    {/* </SearchInputProvider> */}
+    {/* </HistoryToggleProvider> */}
+    </Router>
+
   );
 }
