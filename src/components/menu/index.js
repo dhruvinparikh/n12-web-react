@@ -4,9 +4,9 @@ import History from '@material-ui/icons/History';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { GET_HISTORY_TOGGLE } from '../../graphql/queries/historyToggleQueries';
-import { UPDATE_HISTORY_TOGGLE } from '../../graphql/mutations/historyToggleMutation';
+// import { useQuery, useMutation } from '@apollo/react-hooks';
+// import { GET_HISTORY_TOGGLE } from '../../graphql/queries/historyToggleQueries';
+// import { UPDATE_HISTORY_TOGGLE } from '../../graphql/mutations/historyToggleMutation';
 
 // import Badge from '@material-ui/core/Badge';
 // import MailIcon from '@material-ui/icons/Mail';
@@ -19,8 +19,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
 // uncomment for redux
-// import {useSelector, useDispatch} from 'react-redux';
-// import { toggleHistory } from "./history-menu.slice";
+import {useSelector, useDispatch} from 'react-redux';
+import { toggleHistory } from "./history-menu.slice";
 
 import useStyles from './menu.styles';
 
@@ -30,12 +30,12 @@ const PrimaryMenuAppBar = (props) => {
   // const historyToggleContext = useContext(HistoryToggleContext);
 
   // uncomment for redux
-  // const historyToggle = useSelector(state => state.historyMenu.historyToggle);
-  // const dispatch = useDispatch();
+  const historyToggle = useSelector(state => state.historyMenu.historyToggle);
+  const dispatch = useDispatch();
 
-  const { data } = useQuery(GET_HISTORY_TOGGLE);
+  // const { data } = useQuery(GET_HISTORY_TOGGLE);
 
-  const [toggleHistory] = useMutation(UPDATE_HISTORY_TOGGLE, { variables: { historyToggle: !data.historyToggle } })
+  // const [toggleHistory] = useMutation(UPDATE_HISTORY_TOGGLE, { variables: { historyToggle: !data.historyToggle } })
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -70,10 +70,10 @@ const PrimaryMenuAppBar = (props) => {
     // historyToggleContext.setHistoryToggle(!historyToggleContext.historyToggle);
 
     // uncomment for redux
-    // dispatch(toggleHistory(!historyToggle));
+    dispatch(toggleHistory(!historyToggle));
 
-
-    toggleHistory();
+    // uncomment for apollo state management
+    // toggleHistory();
   };
 
   const renderMenu = (
@@ -87,7 +87,7 @@ const PrimaryMenuAppBar = (props) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Manage N12</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Manage</MenuItem>
     </Menu>
   );
 
@@ -118,20 +118,21 @@ const PrimaryMenuAppBar = (props) => {
             }
           </HistoryToggleContext.Consumer> */}
 
-           {/* uncomment for redux
-           <Fragment>
+          {/* uncomment for redux */}
+            <Fragment>
               {historyToggle ? 
               <History /> : 
               <History color="action" />
               }
-            </Fragment> */}
+            </Fragment>
 
-             <Fragment>
+          {/* uncomment for apollo
+            <Fragment>
               {data.historyToggle ? 
               <History /> : 
               <History color="action" />
               }
-            </Fragment>
+            </Fragment> */}
         </IconButton>
         <p>History</p>
       </MenuItem>
@@ -169,7 +170,8 @@ const PrimaryMenuAppBar = (props) => {
     <Fragment>
       <div className={classes.sectionDesktop}>
         <IconButton color="inherit" onClick={handleHistoryToggle}>
-          {/* <HistoryToggleContext.Consumer>
+          {/* uncomment for react context
+          <HistoryToggleContext.Consumer>
             { historyToggleContext => {
                 return (
                   <Fragment>
@@ -182,8 +184,18 @@ const PrimaryMenuAppBar = (props) => {
               }
             }
           </HistoryToggleContext.Consumer> */}
+
+          {/* uncomment for apollo client
           <Fragment>
             {data.historyToggle ? 
+            <History /> : 
+            <History color="action" />
+            }
+          </Fragment> 
+          */}
+
+          <Fragment>
+            {historyToggle ? 
             <History /> : 
             <History color="action" />
             }

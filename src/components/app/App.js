@@ -30,19 +30,29 @@ import { useTheme } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 
 // uncomment for redux
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { SEARCH_INPUT_QUERY } from '../../graphql/queries/submitSearchInputQueries';
+import { GET_DAPPS_INFO, SEARCH_DAPPS_INFO } from '../../graphql/queries/getDappsQueries';
+
 import { useQuery } from '@apollo/react-hooks';
 
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
   const theme = useTheme();
   // uncomment for redux
-  // const {searchInputSubmit} = useSelector(state => state.searchForm);
+  const {searchInputSubmit} = useSelector(state => state.searchForm);
 
-  const { data } = useQuery(SEARCH_INPUT_QUERY);
-  console.log("data", data)
+  // uncomment for apollo client
+  // const { data } = useQuery(SEARCH_INPUT_QUERY);
+  // console.log("data", data)
+  // const { data: dappsInfo, error: errorDappsInfo, loading: loadingDappsInfo } = useQuery(GET_DAPPS_INFO);
+  // console.log("dappsInfo", dappsInfo)
+  // const { data: sDappsInfo, error: errorSDappsInfo, loading: loadingSDappsInfo } = useQuery(SEARCH_DAPPS_INFO, {
+  //   variables: { q: "a" },
+  // });
+  // console.log("sDappsInfo", sDappsInfo)
+
   const [open, setOpen] = React.useState(false);
 
   
@@ -132,17 +142,16 @@ export default function PrimarySearchAppBar() {
               {/* <div>Is history on? {historyContext.historyToggle.toString()} </div> */}
               {
                 <div>
-                  {/* 
-                  uncomment for redux
+                  
+                  {/* uncomment for redux */}
                   {searchInputSubmit.map((entry, index) =>
                     <div key={index}>{entry}</div>
-                  )} */}
+                  )}
 
-      {data.searchInputs.map(searchInput => <div>{searchInput.searchText}</div>)}
-
-                  {/* {searchInputSubmit} */}
+                  {/* uncomment for apollo client  */}
+                  {/* {data.searchInputs.map(searchInput => <div>{searchInput.searchText}</div>)} */}
+                  {/* {loadingDappsInfo ? <div> Loading </div> : dappsInfo.dapps.map(dapp => <div>{dapp.name} {dapp.description}</div>)} */}
   
-
                 </div>
               }
 

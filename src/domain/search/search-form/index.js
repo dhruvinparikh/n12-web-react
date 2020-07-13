@@ -7,7 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { Mutation } from '@apollo/react-components';
+import { Query } from '@apollo/react-components';
 
 // import SearchIcon from '@material-ui/icons/Search';
 
@@ -16,23 +16,34 @@ import { Mutation } from '@apollo/react-components';
 // import {HistoryToggleContext} from '../../../context/history-toggle-context';
 
 // uncomment for Redux
-// import { useSelector, useDispatch } from "react-redux";
-// import { addSearchInput } from "./search-form.slice";
+import { useSelector, useDispatch } from "react-redux";
+import { addSearchInput } from "./search-form.slice";
 
 // import custom state hooks
 import useStyles from './search-form.styles';
 
-import { useMutation } from '@apollo/react-hooks';
-import { ADD_SEARCH_INPUT_MUTATION } from '../../../graphql/mutations/submitSearchInputMutation';
+import { useQuery } from '@apollo/react-hooks';
+import { SEARCH_LIKE_DAPPS_INFO, ALL_DAPPS } from '../../../graphql/queries/getDappsQueries';
+
+// uncomment for apollo client
+// import { ADD_SEARCH_INPUT_MUTATION } from '../../../graphql/mutations/submitSearchInputMutation';
+// import { GET_HISTORY_TOGGLE } from '../../../graphql/queries/historyToggleQueries';
+
 const Message = () => {
   // uncomment for redux
-  // const message = useSelector(state => state.searchForm.message);
+  const message = useSelector(state => state.searchForm.message);
+  const historyToggle = useSelector(state => state.historyMenu.historyToggle);
+
   // the text will render to a random color for
   // each instance of the Message component
-  // useEffect(() => { 
-  //   // do stuff 
-  //   console.log('Colour Change');    
-  // }, [message]);
+
+  // uncomment for apollo state management
+  // const historyToggle = useQuery(GET_HISTORY_TOGGLE)
+
+  useEffect(() => { 
+    // do stuff 
+    console.log('Colour Change');    
+  }, [historyToggle]);
 
   const getColor = () => (Math.floor(Math.random() * 255))
   const style = {
@@ -59,12 +70,17 @@ const SearchForm = () =>  {
   // const historyContext = useContext(HistoryToggleContext);
 
   // uncomment for redux
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const historyToggle = useSelector(state => state.historyMenu.historyToggle);
 
-
+  // uncomment for apollo client
   // const [addSearchInput] = useMutation(ADD_SEARCH_INPUT_MUTATION, { variables: { searchInput:  } })
 
-  const handleSearchOnChange = (event, addSearchInput)=>{
+  // uncomment for apollo client
+  // const handleSearchOnChange = (event, addSearchInput)=>{
+  
+  // redux handling
+  const handleSearchOnChange = (event)=>{
     if(event.key === "Enter"){
 
       // uncomment for Context context 
@@ -78,74 +94,32 @@ const SearchForm = () =>  {
       // trigger effect
 
       // uncomment for redux
-      // dispatch(addSearchInput(event.target.value))
-      // console.log('addSearchInput', addSearchInput)
-      addSearchInput({ variables: {searchInputSubmit : { searchText: event.target.value }} })
-    }
-  }
+      if( historyToggle ){
+        dispatch(addSearchInput(event.target.value));
+      }
 
-  function sleep(delay = 0) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, delay);
-    });
+      // uncomment for apollo client
+      // console.log('addSearchInput', addSearchInput)
+      // addSearchInput({ variables: {searchInputSubmit : { searchText: event.target.value }} })
+    }
   }
 
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  const loading = open && options.length === 0;
-
-  useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
-    (async () => {
-      const response = await fetch('https://country.register.gov.uk/records.json?page-size=5000');
-      await sleep(1e3); // For demo purposes.
-      const countries = await response.json();
-      // setSearchResult(countries);
-      if (active) {
-        setOptions(Object.keys(countries).map((key) => {
-          const [name] = countries[key].item;
-          return name;
-        }));
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loading]);
-
-  useEffect(() => {
-    if (!open) {
-      setOptions([]);
-    }
-  }, [open]);
-
-  const filterOptions = (options, { inputValue }) => {
-    // console.log("filtered", options);
-    if(inputValue){
-      // console.log('Input Value')
-      // console.log('Options')
-      // setSearchResult(options);
-
-    }
-    return options;
-  }
-
 
   return (
-<Fragment>
+  <Fragment>
     <div className={classes.search}>
     {/* <div className={classes.searchIcon}>
       <SearchIcon />
     </div> */}
-    <Mutation mutation={ADD_SEARCH_INPUT_MUTATION}>
-      {(addSearchInput, { data }) => (
-  
+    
+    {/* uncomment for apollo client
+      <Mutation mutation={ADD_SEARCH_INPUT_MUTATION}>
+      {(addSearchInput, { data }) => ( */}
+
+    {/* uncomment for apollo client */}
+    <Query query={ALL_DAPPS}>
+      {({ loading, error, data }) => 
         <Autocomplete
           id="asynchronous-demo"
           classes={{
@@ -163,8 +137,8 @@ const SearchForm = () =>  {
           }}
           getOptionSelected={(option, value) => option.name === value.name}
           getOptionLabel={(option) => option.name}
-          filterOptions={filterOptions}
-          options={options}
+          // filterOptions={filterOptions}
+          options={loading ? [] : data.allDApps  }
           loading={loading}
           renderInput={(params) => (
             <TextField
@@ -172,9 +146,12 @@ const SearchForm = () =>  {
               label="Search"
               variant="filled"
               size="small"
-              // onKeyPress={handleSearchOnChange}
               onKeyPress={e=>{
-                handleSearchOnChange(e, addSearchInput)
+                // uncomment for apollo store management
+                // handleSearchOnChange(e, addSearchInput);
+
+                // uncomment for redux
+                handleSearchOnChange(e);
               }}
               InputProps={{
                 ...params.InputProps,
@@ -188,21 +165,11 @@ const SearchForm = () =>  {
             />
           )}
         />
-      )}
-      </Mutation>
-      {/* <InputBase
-        placeholder="Search…"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        onKeyPress={handleSearchOnChange}
-        fullWidth={true}
-        inputProps={{ 'aria-label': 'search' }}
-      /> */}
+      }
+    </Query>
     </div>
     <MemoizedMessage/>
-    </Fragment>
+  </Fragment>
   )
 }
 

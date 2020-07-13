@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 export default function ResultsGridList() {
   const classes = useStyles();
   const searchContext = useContext(SearchInputContext);
-
+  // arg any type query 
+  
   return (
     <div className={classes.root}>
       <GridList cellHeight={180} className={classes.gridList}  cols={3}>
