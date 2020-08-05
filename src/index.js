@@ -2,11 +2,28 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/app/App';
+
+// uncomment to add Redux
+import store from './reducers/';
+import { Provider } from 'react-redux'; 
+
+// uncomment for apollo client
+import { ApolloProvider } from '@apollo/react-hooks';
+import client from './graphql/'
+
 import * as serviceWorker from './serviceWorker';
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    {/* // uncomment to add Redux   */}
+    <Provider store={store}>
+      {/* // uncomment for apollo client   */}
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    {/* // uncomment to add Redux  */}
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

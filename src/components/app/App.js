@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { Fragment, useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
+import Container from '@material-ui/core/Container';
 
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,25 +19,43 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import SearchForm from '../../domain/search/search-form';
 import PrimaryMenuAppBar from '../menu';
+import ResultsGridList from '../result-tiles';
 
-import HistoryToggleContext from '../../context/history-toggle-context';
-import HistoryToggleHook from '../../hooks/history-toggle-hook';
-
-import SearchInputHoook from '../../hooks/search-input-hook';
-import SearchInputContext from '../../context/search-input-context';
+//  uncomment for Context
+// import HistoryToggleProvider, {HistoryToggleContext} from '../../context/history-toggle-context';
+// import SearchInputProvider, {SearchInputContext} from '../../context/search-input-context';
 
 import useStyles from './App.styles';
 import { useTheme } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 
+// uncomment for redux
+import { useSelector } from "react-redux";
+
+import { SEARCH_INPUT_QUERY } from '../../graphql/queries/submitSearchInputQueries';
+import { GET_DAPPS_INFO, SEARCH_DAPPS_INFO } from '../../graphql/queries/getDappsQueries';
+
+import { useQuery } from '@apollo/react-hooks';
+
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
   const theme = useTheme();
-  const historyContext = HistoryToggleHook(false);
-  const searchContext = SearchInputHoook([]);
+  // uncomment for redux
+  const {searchInputSubmit} = useSelector(state => state.searchForm);
+
+  // uncomment for apollo client
+  // const { data } = useQuery(SEARCH_INPUT_QUERY);
+  // console.log("data", data)
+  // const { data: dappsInfo, error: errorDappsInfo, loading: loadingDappsInfo } = useQuery(GET_DAPPS_INFO);
+  // console.log("dappsInfo", dappsInfo)
+  // const { data: sDappsInfo, error: errorSDappsInfo, loading: loadingSDappsInfo } = useQuery(SEARCH_DAPPS_INFO, {
+  //   variables: { q: "a" },
+  // });
+  // console.log("sDappsInfo", sDappsInfo)
 
   const [open, setOpen] = React.useState(false);
 
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -45,12 +64,10 @@ export default function PrimarySearchAppBar() {
     setOpen(false);
   };
 
-
-
-
   return (
     <Router>
-
+    {/* <HistoryToggleProvider> */}
+    {/* <SearchInputProvider> */}
     <div className={classes.grow}>
       <div className={classes.grow}>
         <AppBar position="static">
@@ -69,16 +86,10 @@ export default function PrimarySearchAppBar() {
                   N12
                 </Link>
               </Typography>
-            <HistoryToggleContext.Provider value={historyContext.historyToggle}>
-              <SearchInputContext.Provider value={searchContext}>
-                <SearchForm/>
-              </SearchInputContext.Provider>
-            </HistoryToggleContext.Provider >
 
+                <SearchForm/>
             <div className={classes.grow} />
-            <HistoryToggleContext.Provider value={historyContext}>
-            <PrimaryMenuAppBar/>
-            </HistoryToggleContext.Provider>
+            <PrimaryMenuAppBar />
           </Toolbar>
         </AppBar>
         <Drawer
@@ -116,39 +127,47 @@ export default function PrimarySearchAppBar() {
         </Drawer>
       </div>
       {/* <Router> */}
-        <Route exact={true} path="/" render={() => {
+      <Container maxWidth="md">
+        <Route exact={true} path={["/", "/search"]} render={() => {
           return(
-            <HistoryToggleContext.Provider value={historyContext.historyToggle}>
-              <HistoryToggleContext.Consumer>
+            <Fragment>
+              {/* <HistoryToggleContext.Consumer>
                 {(historyContext) => {
-                  // console.log(historyContext)
+                  console.log("APP", historyContext);
                   return (
-                  <div>here - render history {historyContext.toString()} </div>
+                  <div>Is history on? {historyContext.historyToggle.toString()} </div>
                   )
                 }}
-              </HistoryToggleContext.Consumer>
-              <SearchInputContext.Provider value={searchContext.searchQuery}>
-                <SearchInputContext.Consumer>
-                  {(searchQuery) => {
-                    return(
-                      <div>
-                        {searchQuery.map((entry, index) =>
-                          <div key={index}>{entry}</div>
-                        )}
-                      </div>
-                    )
-                  }}
-                </SearchInputContext.Consumer>
-              </SearchInputContext.Provider>
-            </HistoryToggleContext.Provider>
+              </HistoryToggleContext.Consumer> */}
+              {/* <div>Is history on? {historyContext.historyToggle.toString()} </div> */}
+              {
+                <div>
+                  
+                  {/* uncomment for redux */}
+                  {searchInputSubmit.map((entry, index) =>
+                    <div key={index}>{entry}</div>
+                  )}
+
+                  {/* uncomment for apollo client  */}
+                  {/* {data.searchInputs.map(searchInput => <div>{searchInput.searchText}</div>)} */}
+                  {/* {loadingDappsInfo ? <div> Loading </div> : dappsInfo.dapps.map(dapp => <div>{dapp.name} {dapp.description}</div>)} */}
+  
+                </div>
+              }
+
+              {/* <ResultsGridList/> */}
+            </Fragment>
           )
         }}/>
 
         <Route path="/reports" render={()=>{
           return(<div>REPORT</div>)
         }}/>
+      </Container>
 
     </div>
+    {/* </SearchInputProvider> */}
+    {/* </HistoryToggleProvider> */}
     </Router>
 
   );
