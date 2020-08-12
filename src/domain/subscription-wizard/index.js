@@ -94,6 +94,12 @@ export default function HorizontalLinearStepper() {
     return result;
   };
 
+  const displayNotifications = data
+    ? data.dApps.Notifications.filter((item) => {
+        return selectedNotifications.indexOf(item.uuid) > -1;
+      })
+    : [];
+
   if (subscribeNotificationsError) {
     dispatch(
       openSnackbar({ message: "Failed. Please try again.", type: "error" })
@@ -168,6 +174,7 @@ export default function HorizontalLinearStepper() {
             email={email}
             isSelected={isSelected}
             error={error}
+            displayNotifications={displayNotifications}
           />
         );
       default:

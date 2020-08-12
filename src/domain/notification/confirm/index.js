@@ -47,15 +47,10 @@ export default function Confirm(props) {
               {props.email}
             </Typography>
           </Grid>
-          {props.data.dApps.Notifications ? (
-            props.data.dApps.Notifications.map((notification) => (
+          {props.displayNotifications && props.displayNotifications.length ? (
+            props.displayNotifications.map((notification) => (
               <Grid item xs={12} key={notification.uuid}>
-                <LabeledSwitch
-                  title={notification.name}
-                  disabled={true}
-                  checked={props.isSelected(notification)}
-                  value={notification.uuid}
-                />
+                <LabeledSwitch title={notification.name} checkedSwitch={true} />
                 <ExpansionPanel>
                   <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}
